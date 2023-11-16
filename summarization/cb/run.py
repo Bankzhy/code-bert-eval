@@ -21,11 +21,8 @@ using a masked language modeling (MLM) loss.
 
 from __future__ import absolute_import
 
-import json
 import os
-import sys
 import bleu
-import pickle
 import torch
 
 import random
@@ -36,10 +33,10 @@ from io import open
 from itertools import cycle
 import torch.nn as nn
 from model import Seq2Seq
-from tqdm import tqdm, trange
-from torch.utils.data import DataLoader, Dataset, SequentialSampler, RandomSampler,TensorDataset
+from tqdm import tqdm
+from torch.utils.data import DataLoader, SequentialSampler, RandomSampler,TensorDataset
 from torch.utils.data.distributed import DistributedSampler
-from transformers import (WEIGHTS_NAME, AdamW, get_linear_schedule_with_warmup,
+from transformers import (AdamW, get_linear_schedule_with_warmup,
                           RobertaConfig, RobertaModel, RobertaTokenizer)
 
 
@@ -104,41 +101,6 @@ def read_examples(filename):
                         target = nl,
                         )
             )
-
-
-    # with open(filename, encoding="utf-8") as f:
-    #     data = f.readlines()
-    #     for idx, l in enumerate(data):
-    #         js = json.loads(l)
-    #
-    #         code = js['code'].replace('\n',' ')
-    #         code = ' '.join(code.strip().split())
-    #         nl = js['comment'].replace('\n', '')
-    #         nl = ' '.join(nl.strip().split())
-    #         examples.append(
-    #             Example(
-    #                     idx = idx,
-    #                     source=code,
-    #                     target = nl,
-    #                     )
-    #         )
-
-        # for idx, line in enumerate(f):
-        #     line=line.strip()
-        #     js=json.loads(line)
-        #     if 'idx' not in js:
-        #         js['idx']=idx
-        #     code=' '.join(js['code_tokens']).replace('\n',' ')
-        #     code=' '.join(code.strip().split())
-        #     nl=' '.join(js['docstring_tokens']).replace('\n','')
-        #     nl=' '.join(nl.strip().split())
-        #     examples.append(
-        #         Example(
-        #                 idx = idx,
-        #                 source=code,
-        #                 target = nl,
-        #                 )
-        #     )
     return examples
 
 
@@ -231,11 +193,11 @@ def main():
     parser.add_argument("--load_model_path", default=None, type=str, 
                         help="Path to trained model: Should contain the .bin files" )    
     ## Other parameters
-    parser.add_argument("--train_filename", default="dataset/tl/train", type=str,
+    parser.add_argument("--train_filename", default="../dataset/tl/train", type=str,
                         help="The train filename. Should contain the .jsonl files for this task.")
-    parser.add_argument("--dev_filename", default="dataset/tl/valid", type=str,
+    parser.add_argument("--dev_filename", default="../dataset/tl/valid", type=str,
                         help="The dev filename. Should contain the .jsonl files for this task.")
-    parser.add_argument("--test_filename", default=None, type=str, 
+    parser.add_argument("--test_filename", default="../dataset/tl/test", type=str,
                         help="The test filename. Should contain the .jsonl files for this task.")  
     
     parser.add_argument("--config_name", default="", type=str,
@@ -516,7 +478,7 @@ def main():
                         f1.write(str(gold.idx)+'\t'+gold.target+'\n')     
 
                 (goldMap, predictionMap) = bleu.computeMaps(predictions, os.path.join(args.output_dir, "dev.gold")) 
-                dev_bleu=round(bleu.bleuFromMaps(goldMap, predictionMap)[0],2)
+                dev_bleu=round(bleu.bleuFromMaps(goldMap, predictionMap)[0], 2)
                 logger.info("  %s = %s "%("bleu-4",str(dev_bleu)))
                 logger.info("  "+"*"*20)    
                 if dev_bleu>best_bleu:
@@ -572,7 +534,7 @@ def main():
                     f1.write(str(gold.idx)+'\t'+gold.target+'\n')     
 
             (goldMap, predictionMap) = bleu.computeMaps(predictions, os.path.join(args.output_dir, "test_{}.gold".format(idx))) 
-            dev_bleu=round(bleu.bleuFromMaps(goldMap, predictionMap)[0],2)
+            dev_bleu=round(bleu.bleuFromMaps(goldMap, predictionMap)[0], 2)
             logger.info("  %s = %s "%("bleu-4",str(dev_bleu)))
             logger.info("  "+"*"*20)    
 
