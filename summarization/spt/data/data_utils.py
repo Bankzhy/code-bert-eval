@@ -606,40 +606,100 @@ def parse_for_summarization(source_path, code_path, nl_path, lang):
             - List of comment strings
 
     """
-    paths = {'source': source_path}
-    logger.info(f'    Source code file: {source_path}')
-    sources = load_lines(source_path)
-    # if lang == enums.LANG_PYTHON:
-    #     sources = [convert_python_source_classical_summarization(source) for source in sources]
-
-    if not os.path.isfile(code_path):
-        paths['code'] = source_path
-        logger.info('    Tokenize source code')
-        codes = [tokenize_source(source, lang=lang) for source in sources]
-    else:
-        paths['code'] = code_path
-        logger.info(f'    Tokenized code file: {code_path}')
-        codes = load_lines(code_path)
-    paths['nl'] = nl_path
-    logger.info(f'    Summarization file: {nl_path}')
-    nls = load_lines(nl_path)
-    # sources, codes, nls = sources[:1000], codes[:1000], nls[:1000]
-    assert len(sources) == len(codes) == len(nls)
-
+    # paths = {'source': source_path}
+    # logger.info(f'    Source code file: {source_path}')
+    # sources = load_lines(source_path)
+    # # if lang == enums.LANG_PYTHON:
+    # #     sources = [convert_python_source_classical_summarization(source) for source in sources]
+    #
+    # if not os.path.isfile(code_path):
+    #     paths['code'] = source_path
+    #     logger.info('    Tokenize source code')
+    #     codes = [tokenize_source(source, lang=lang) for source in sources]
+    # else:
+    #     paths['code'] = code_path
+    #     logger.info(f'    Tokenized code file: {code_path}')
+    #     codes = load_lines(code_path)
+    # paths['nl'] = nl_path
+    # logger.info(f'    Summarization file: {nl_path}')
+    # nls = load_lines(nl_path)
+    # # sources, codes, nls = sources[:1000], codes[:1000], nls[:1000]
+    # assert len(sources) == len(codes) == len(nls)
+    #
+    # new_codes = []
+    # new_nls = []
+    # names = []
+    # asts = []
+    # for source, code, nl in tqdm(zip(sources, codes, nls), desc='Parsing', leave=False, total=len(sources)):
+    #     try:
+    #         source = remove_comments_and_docstrings(source, lang=lang)
+    #         ast, name = generate_single_ast_nl(source=source, lang=lang)
+    #         new_codes.append(code)
+    #         new_nls.append(nl)
+    #         names.append(name)
+    #         asts.append(ast)
+    #     except Exception:
+    #         continue
     new_codes = []
     new_nls = []
     names = []
     asts = []
-    for source, code, nl in tqdm(zip(sources, codes, nls), desc='Parsing', leave=False, total=len(sources)):
-        try:
-            source = remove_comments_and_docstrings(source, lang=lang)
-            ast, name = generate_single_ast_nl(source=source, lang=lang)
-            new_codes.append(code)
-            new_nls.append(nl)
-            names.append(name)
+    paths = {'source': source_path}
+    failed_count = 0
+    with open(code_path, encoding="utf-8") as f:
+        datas = f.readlines()
+        for data in datas:
+            d_l = data.split("	")
+            idx = d_l[0]
+            code = d_l[1]
+            # codes_dict[idx] = code
+            code = code.replace('\n', '')
+            source = remove_comments_and_docstrings(code, lang=lang)
+            try:
+                ast, name = generate_single_ast_nl(source=source, lang=lang)
+            except Exception as e:
+                # print(source)
+                failed_count += 1
+
+            code = tokenize_source(code, lang=lang)
             asts.append(ast)
-        except Exception:
-            continue
+            new_codes.append(code)
+            names.append(name)
+        print(failed_count)
+
+    with open(nl_path, encoding="utf-8") as f:
+        datas = f.readlines()
+        for data in datas:
+            d_l = data.split("	")
+            idx = d_l[0]
+            nl = d_l[1]
+            nl = nl.replace('\n', '')
+            new_nls.append(nl)
+
+
+
+    # try:
+    #     with open(code_path, 'r') as file:
+    #         file_content = file.readlines()
+    #         for fd in file_content:
+    #             data = json.loads(fd)
+    #
+    #             code = data['code']
+    #             comment = data['comment']
+    #             source = remove_comments_and_docstrings(code, lang=lang)
+    #             try:
+    #                 ast, name = generate_single_ast_nl(source=source, lang=lang)
+    #             except Exception as e:
+    #                 print(source)
+    #             new_nls.append(comment)
+    #             code = tokenize_source(source, lang=lang)
+    #             new_codes.append(code)
+    #             asts.append(ast)
+    #             names.append(name)
+    # except FileNotFoundError:
+    #     print("File not found.")
+    # except json.JSONDecodeError:
+    #     print("Error decoding JSON.")
 
     return paths, new_codes, asts, names, new_nls
 

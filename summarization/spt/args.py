@@ -103,7 +103,7 @@ class DatasetArguments:
     """Arguments for dataset loading."""
 
     dataset_root: str = field(
-        default='../../dataset/',
+        default='../../dataset/tl',
         metadata={'help': 'Root of the dataset'}
     )
 

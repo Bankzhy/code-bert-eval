@@ -60,11 +60,23 @@ class CodeDataset(Dataset):
             if task == enums.TASK_SUMMARIZATION:
                 assert language, '\'Language\' must be specific if downstream task is code summarization'
                 assert split in ['train', 'valid', 'test']
-                self.dataset_dir = os.path.join(self.dataset_dir, language, split)
+                # self.dataset_dir = os.path.join(self.dataset_dir, language, split)
 
-                self.source_path = os.path.join(self.dataset_dir, 'source.code')
-                self.code_path = os.path.join(self.dataset_dir, 'token.code')
-                self.nl_path = os.path.join(self.dataset_dir, 'token.docstring')
+                # self.source_path = os.path.join(self.dataset_dir, 'source.code')
+                # self.code_path = os.path.join(self.dataset_dir, 'token.code')
+                # self.nl_path = os.path.join(self.dataset_dir, 'token.docstring')
+                self.dataset_dir = os.path.join(self.args.dataset_root,  split)
+                self.source_path = os.path.join(self.args.dataset_root,  split)
+                if split == 'train':
+                    self.code_path = os.path.join(self.source_path, "train.token.code")
+                    self.nl_path = os.path.join(self.source_path, "train.token.nl")
+                elif split == 'valid':
+                    self.code_path = os.path.join(self.source_path, "valid.token.code")
+                    self.nl_path = os.path.join(self.source_path, "valid.token.nl")
+                else:
+                    self.code_path = os.path.join(self.source_path, "test.token.code")
+                    self.nl_path = os.path.join(self.source_path, "test.token.nl")
+
 
                 self.paths, self.codes, self.asts, self.names, self.nls = parse_for_summarization(
                     source_path=self.source_path,
