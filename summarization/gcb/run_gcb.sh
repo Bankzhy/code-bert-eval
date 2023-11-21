@@ -1,5 +1,5 @@
 mkdir saved_models
-python run.py \
+python run_gcb.py \
     --output_dir=saved_models \
     --config_name=microsoft/graphcodebert-base \
     --model_name_or_path=microsoft/graphcodebert-base \
