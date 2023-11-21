@@ -1,18 +1,31 @@
-mkdir saved_models
-python run_gcb.py \
-    --output_dir=saved_models \
-    --model_name_or_path=microsoft/graphcodebert-base \
-    --do_train \
-    --train_filename=../dataset/tl/train \
-    --dev_filename=../dataset/tl/valid \
-    --test_filename=../dataset/tl/test \
-    --num_train_epochs 3 \
-    --max_source_length 256 \
-    --max_target_length 128 \
-    --data_flow_length 128 \
-    --train_batch_size 64 \
-    --eval_batch_size 64 \
-    --learning_rate 2e-5 \
-    --max_grad_norm 1.0 \
-    --evaluate_during_training \
-    --seed 123456 2>&1| tee saved_models/train.log
+source=java
+lr=1e-4
+batch_size=32
+beam_size=10
+source_length=256
+target_length=128
+output_dir=saved_models/$source/
+train_file=../dataset/tl/train
+dev_file=../dataset/tl/valid
+epochs=5
+pretrained_model=microsoft/graphcodebert-base
+
+mkdir -p $output_dir
+python run.py \
+--do_train \
+--do_eval \
+--model_type roberta \
+--source_lang $source \
+--model_name_or_path $pretrained_model \
+--tokenizer_name microsoft/graphcodebert-base \
+--config_name microsoft/graphcodebert-base \
+--train_filename $train_file \
+--dev_filename $dev_file \
+--output_dir $output_dir \
+--max_source_length $source_length \
+--max_target_length $target_length \
+--beam_size $beam_size \
+--train_batch_size $batch_size \
+--eval_batch_size $batch_size \
+--learning_rate $lr \
+--num_train_epochs $epochs 2>&1| tee $output_dir/train.log

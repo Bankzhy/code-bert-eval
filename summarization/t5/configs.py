@@ -17,7 +17,7 @@ def add_args(parser):
     parser.add_argument("--add_lang_ids", action='store_true')
     parser.add_argument("--data_num", default=-1, type=int)
     parser.add_argument("--start_epoch", default=0, type=int)
-    parser.add_argument("--num_train_epochs", default=15, type=int)
+    parser.add_argument("--num_train_epochs", default=1, type=int)
     parser.add_argument("--patience", default=2, type=int)
     parser.add_argument("--cache_path", type=str, required=False, default="saved_models/cache_data")
     parser.add_argument("--summary_dir", type=str, required=False, default="tensorboard")
@@ -48,10 +48,10 @@ def add_args(parser):
                         help="Pretrained config name or path if not the same as model_name")
     parser.add_argument("--tokenizer_name", default="Salesforce/codet5-base", type=str,
                         help="Pretrained tokenizer name or path if not the same as model_name")
-    parser.add_argument("--max_source_length", default=64, type=int,
+    parser.add_argument("--max_source_length", default=32, type=int,
                         help="The maximum total source sequence length after tokenization. Sequences longer "
                              "than this will be truncated, sequences shorter will be padded.")
-    parser.add_argument("--max_target_length", default=32, type=int,
+    parser.add_argument("--max_target_length", default=16, type=int,
                         help="The maximum total target sequence length after tokenization. Sequences longer "
                              "than this will be truncated, sequences shorter will be padded.")
 

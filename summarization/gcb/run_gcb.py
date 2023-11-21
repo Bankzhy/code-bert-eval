@@ -45,21 +45,17 @@ MODEL_CLASSES = {'roberta': (RobertaConfig, RobertaModel, RobertaTokenizer)}
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s',
                     datefmt='%m/%d/%Y %H:%M:%S',
                     level=logging.INFO)
-from parser import DFG_python, DFG_java, DFG_ruby, DFG_go, DFG_php, DFG_javascript, DFG_csharp
-from parser import (remove_comments_and_docstrings,
+from summarization.gcb.parser import DFG_python, DFG_java, DFG_ruby, DFG_go, DFG_php, DFG_javascript, DFG_csharp
+from summarization.gcb.parser import (remove_comments_and_docstrings,
                     tree_to_token_index,
                     index_to_code_token,
                     tree_to_variable_index)
 from tree_sitter import Language, Parser
 
 dfg_function = {
-    'python': DFG_python,
+
     'java': DFG_java,
-    'ruby': DFG_ruby,
-    'go': DFG_go,
-    'php': DFG_php,
-    'javascript': DFG_javascript,
-    'c_sharp': DFG_csharp,
+
 }
 
 logger = logging.getLogger(__name__)
@@ -127,25 +123,67 @@ class Example(object):
 
 
 def read_examples(filename):
-    """Read examples from filename."""
-    examples = []
-    source, target = filename.split(',')
-    lang = 'java'
-    if source[-1] == 's':
-        lang = 'c_sharp'
+    # """Read examples from filename."""
+    # examples = []
+    # source, target = filename.split(',')
+    # lang = 'java'
+    # if source[-1] == 's':
+    #     lang = 'c_sharp'
+    #
+    # with open(source, encoding="utf-8") as f1, open(target, encoding="utf-8") as f2:
+    #     for line1, line2 in zip(f1, f2):
+    #         line1 = line1.strip()
+    #         line2 = line2.strip()
+    #         examples.append(
+    #             Example(
+    #                 source=line1,
+    #                 target=line2,
+    #                 lang=lang
+    #             )
+    #         )
 
-    with open(source, encoding="utf-8") as f1, open(target, encoding="utf-8") as f2:
-        for line1, line2 in zip(f1, f2):
-            line1 = line1.strip()
-            line2 = line2.strip()
+    """Read examples from filename."""
+    examples=[]
+    codes_dict = {}
+
+    tag = filename.split('/')
+    tag = tag[len(tag)-1]
+    if tag == 'train':
+        code_tokn_f = os.path.join(filename, "train.token.code")
+        nl_tokn_f = os.path.join(filename, "train.token.nl")
+    elif tag == 'valid':
+        code_tokn_f = os.path.join(filename, "valid.token.code")
+        nl_tokn_f = os.path.join(filename, "valid.token.nl")
+    else:
+        code_tokn_f = os.path.join(filename, "test.token.code")
+        nl_tokn_f = os.path.join(filename, "test.token.nl")
+
+
+    with open(code_tokn_f, encoding="utf-8") as f:
+        datas = f.readlines()
+        for data in datas:
+            d_l = data.split("	")
+            idx = d_l[0]
+            code = d_l[1]
+            codes_dict[idx] = code
+
+    with open(nl_tokn_f, encoding="utf-8") as f:
+        datas = f.readlines()
+        for data in datas:
+            d_l = data.split("	")
+            idx = d_l[0]
+            nl = d_l[1]
+            code = codes_dict[idx]
+
+            code = code.replace('\n', '')
+            nl = nl.replace('\n', '')
             examples.append(
                 Example(
-                    source=line1,
-                    target=line2,
-                    lang=lang
-                )
+                        source=code,
+                        target = nl,
+                        lang='java'
+                        )
             )
-
     return examples
 
 
@@ -187,8 +225,8 @@ def convert_examples_to_features(examples, tokenizer, args, stage=None):
     for example_index, example in enumerate(tqdm(examples, total=len(examples))):
         ##extract data flow
         code_tokens, dfg = extract_dataflow(example.source,
-                                            parsers["c_sharp" if args.source_lang == "cs" else "java"],
-                                            "c_sharp" if args.source_lang == "cs" else "java")
+                                            parsers["java"],
+                                            "java")
         code_tokens = [tokenizer.tokenize('@ ' + x)[1:] if idx != 0 else tokenizer.tokenize(x) for idx, x in
                        enumerate(code_tokens)]
         ori2cur_pos = {}
@@ -274,7 +312,7 @@ class TextDataset(Dataset):
 
     def __getitem__(self, item):
         # calculate graph-guided masked function
-        attn_mask = np.zeros((self.args.max_source_length, self.args.max_source_length), dtype=np.bool)
+        attn_mask = np.zeros((self.args.max_source_length, self.args.max_source_length), dtype=bool)
         # calculate begin index of node and max length of input
         node_index = sum([i > 1 for i in self.examples[item].position_idx])
         max_length = sum([i != 1 for i in self.examples[item].position_idx])
@@ -316,27 +354,27 @@ def main():
     parser = argparse.ArgumentParser()
 
     ## Required parameters
-    parser.add_argument("--model_type", default=None, type=str, required=True,
+    parser.add_argument("--model_type", default="roberta", type=str, required=False,
                         help="Model type: e.g. roberta")
-    parser.add_argument("--model_name_or_path", default=None, type=str, required=True,
+    parser.add_argument("--model_name_or_path", default="microsoft/graphcodebert-base", type=str, required=False,
                         help="Path to pre-trained model: e.g. roberta-base")
-    parser.add_argument("--output_dir", default=None, type=str, required=True,
+    parser.add_argument("--output_dir", default="saved_models/java/", type=str, required=False,
                         help="The output directory where the model predictions and checkpoints will be written.")
     parser.add_argument("--load_model_path", default=None, type=str,
                         help="Path to trained model: Should contain the .bin files")
     ## Other parameters
-    parser.add_argument("--train_filename", default=None, type=str,
+    parser.add_argument("--train_filename", default="../dataset/tl/train", type=str,
                         help="The train filename. Should contain the .jsonl files for this task.")
-    parser.add_argument("--dev_filename", default=None, type=str,
+    parser.add_argument("--dev_filename", default="../dataset/tl/valid", type=str,
                         help="The dev filename. Should contain the .jsonl files for this task.")
-    parser.add_argument("--test_filename", default=None, type=str,
+    parser.add_argument("--test_filename", default="../dataset/tl/test", type=str,
                         help="The test filename. Should contain the .jsonl files for this task.")
 
-    parser.add_argument("--source_lang", default=None, type=str,
+    parser.add_argument("--source_lang", default="java", type=str,
                         help="The language of input")
-    parser.add_argument("--config_name", default="", type=str,
+    parser.add_argument("--config_name", default="microsoft/graphcodebert-base", type=str,
                         help="Pretrained config name or path if not the same as model_name")
-    parser.add_argument("--tokenizer_name", default="", type=str,
+    parser.add_argument("--tokenizer_name", default="microsoft/graphcodebert-base", type=str,
                         help="Pretrained tokenizer name or path if not the same as model_name")
     parser.add_argument("--max_source_length", default=64, type=int,
                         help="The maximum total source sequence length after tokenization. Sequences longer "
@@ -345,9 +383,9 @@ def main():
                         help="The maximum total target sequence length after tokenization. Sequences longer "
                              "than this will be truncated, sequences shorter will be padded.")
 
-    parser.add_argument("--do_train", action='store_true',
+    parser.add_argument("--do_train", default=True, action='store_true',
                         help="Whether to run training.")
-    parser.add_argument("--do_eval", action='store_true',
+    parser.add_argument("--do_eval", default=True, action='store_true',
                         help="Whether to run eval on the dev set.")
     parser.add_argument("--do_test", action='store_true',
                         help="Whether to run eval on the dev set.")
@@ -372,7 +410,7 @@ def main():
                         help="Epsilon for Adam optimizer.")
     parser.add_argument("--max_grad_norm", default=1.0, type=float,
                         help="Max gradient norm.")
-    parser.add_argument("--num_train_epochs", default=3, type=int,
+    parser.add_argument("--num_train_epochs", default=1, type=int,
                         help="Total number of training epochs to perform.")
     parser.add_argument("--max_steps", default=-1, type=int,
                         help="If > 0: set total number of training steps to perform. Override num_train_epochs.")
