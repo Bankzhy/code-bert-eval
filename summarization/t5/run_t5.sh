@@ -1,2 +1,1 @@
-python run_t5.py \
-  --gpu 1
+python run_t5.py

@@ -82,7 +82,6 @@ else
   RUN_FN=run_gen.py
 fi
 
-CUDA_VISIBLE_DEVICES=${GPU} \
   python ${RUN_FN}  ${MULTI_TASK_AUG}   \
   --do_train --do_eval --do_eval_bleu --do_test  \
   --task ${TASK} --sub_task ${SUB_TASK} --model_type ${MODEL_TYPE} --data_num ${DATA_NUM}  \
