@@ -79,7 +79,7 @@ elif [[ ${TASK} == 'clone' ]]; then
 elif [[ ${TASK} == 'defect' ]] && [[ ${MODEL_TYPE} == 'roberta' ||  ${MODEL_TYPE} == 'bart' ]]; then
   RUN_FN=${WORKDIR}/run_defect.py
 else
-  RUN_FN=${WORKDIRf}/run_gen.py
+  RUN_FN=run_gen.py
 fi
 
 CUDA_VISIBLE_DEVICES=${GPU} \

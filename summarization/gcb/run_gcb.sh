@@ -1,13 +1,11 @@
 mkdir saved_models
 python run_gcb.py \
     --output_dir=saved_models \
-    --config_name=microsoft/graphcodebert-base \
     --model_name_or_path=microsoft/graphcodebert-base \
-    --tokenizer_name=microsoft/graphcodebert-base \
     --do_train \
-    --train_data_file=../dataset/tl/train \
-    --eval_data_file=../dataset/tl/valid \
-    --test_data_file=../dataset/tl/test \
+    --train_filename=../dataset/tl/train \
+    --dev_filename=../dataset/tl/valid \
+    --test_filename=../dataset/tl/test \
     --num_train_epochs 3 \
     --max_source_length 256 \
     --max_target_length 128 \
