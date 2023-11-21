@@ -215,7 +215,7 @@ def main():
                         help="Whether to run training.")
     parser.add_argument("--do_eval", default=True, action='store_true',
                         help="Whether to run eval on the dev set.")
-    parser.add_argument("--do_test", action='store_true',
+    parser.add_argument("--do_test", default=False, action='store_true',
                         help="Whether to run eval on the dev set.")
     parser.add_argument("--do_lower_case", action='store_true',
                         help="Set this flag if you are using an uncased model.")

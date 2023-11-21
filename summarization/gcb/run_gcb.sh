@@ -8,11 +8,12 @@ python run.py \
     --train_data_file=../dataset/tl/train \
     --eval_data_file=../dataset/tl/valid \
     --test_data_file=../dataset/tl/test \
-    --epoch 1 \
-    --code_length 512 \
+    --num_train_epochs 3 \
+    --max_source_length 256 \
+    --max_target_length 128 \
     --data_flow_length 128 \
-    --train_batch_size 16 \
-    --eval_batch_size 32 \
+    --train_batch_size 64 \
+    --eval_batch_size 64 \
     --learning_rate 2e-5 \
     --max_grad_norm 1.0 \
     --evaluate_during_training \
