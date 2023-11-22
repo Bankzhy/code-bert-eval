@@ -362,6 +362,8 @@ def main():
                         help="The output directory where the model predictions and checkpoints will be written.")
     parser.add_argument("--load_model_path", default=None, type=str,
                         help="Path to trained model: Should contain the .bin files")
+    parser.add_argument('--patience', type=int, default=10, required=False, help="early stopping patience")
+
     ## Other parameters
     parser.add_argument("--train_filename", default="../dataset/tl/train", type=str,
                         help="The train filename. Should contain the .jsonl files for this task.")
@@ -424,9 +426,6 @@ def main():
                         help="For distributed training: local_rank")
     parser.add_argument('--seed', type=int, default=42,
                         help="random seed for initialization")
-
-    parser.add_argument('--patience', type=int, default=10,
-                        help="early stopping patience")
     # print arguments
     args = parser.parse_args()
     logger.info(args)

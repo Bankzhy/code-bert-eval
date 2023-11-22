@@ -28,5 +28,5 @@ python run_gcb.py \
 --train_batch_size $batch_size \
 --eval_batch_size $batch_size \
 --learning_rate $lr \
---num_train_epochs $epochs 2>&1| tee $output_dir/train.log \
---patience 6
+--patience 6 \
+--num_train_epochs $epochs 2>&1| tee $output_dir/train.log
