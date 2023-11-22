@@ -7,11 +7,11 @@ target_length=128
 output_dir=saved_models/$source/
 train_file=../dataset/tl/train
 dev_file=../dataset/tl/valid
-epochs=5
+epochs=1
 pretrained_model=microsoft/graphcodebert-base
 
 mkdir -p $output_dir
-python run.py \
+python run_gcb.py \
 --do_train \
 --do_eval \
 --model_type roberta \
