@@ -9,7 +9,7 @@ train_file=../dataset/tl/train
 dev_file=../dataset/tl/valid
 epochs=100
 pretrained_model=microsoft/graphcodebert-base
-reload_path=saved_models/$source/checkpoint-last
+reload_path=saved_models/$source/checkpoint-last/pytorch_model.bin
 
 mkdir -p $output_dir
 python run_gcb.py \
