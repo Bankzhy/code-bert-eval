@@ -72,7 +72,7 @@ def eval_ppl_epoch(args, eval_data, eval_examples, model, tokenizer):
                                 labels=target_ids, decoder_attention_mask=target_mask)
                 loss = outputs.loss
 
-        eval_loss += loss.item()
+        eval_loss += loss.sum().item()
         batch_num += 1
     eval_loss = eval_loss / batch_num
     eval_ppl = round(np.exp(eval_loss), 5)

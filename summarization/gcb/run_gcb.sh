@@ -7,7 +7,7 @@ target_length=128
 output_dir=saved_models/$source/
 train_file=../dataset/tl/train
 dev_file=../dataset/tl/valid
-epochs=60
+epochs=100
 pretrained_model=microsoft/graphcodebert-base
 
 mkdir -p $output_dir
@@ -28,5 +28,5 @@ python run_gcb.py \
 --train_batch_size $batch_size \
 --eval_batch_size $batch_size \
 --learning_rate $lr \
---patience 6 \
+--patience 3 \
 --num_train_epochs $epochs 2>&1| tee $output_dir/train.log
