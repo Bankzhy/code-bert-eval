@@ -7,7 +7,7 @@ target_length=128
 output_dir=saved_models/$source/
 train_file=../dataset/tl/train
 dev_file=../dataset/tl/valid
-epochs=1
+epochs=60
 pretrained_model=microsoft/graphcodebert-base
 
 mkdir -p $output_dir
