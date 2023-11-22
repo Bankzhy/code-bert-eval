@@ -424,6 +424,9 @@ def main():
                         help="For distributed training: local_rank")
     parser.add_argument('--seed', type=int, default=42,
                         help="random seed for initialization")
+
+    parser.add_argument('--patience', type=int, default=10,
+                        help="early stopping patience")
     # print arguments
     args = parser.parse_args()
     logger.info(args)
@@ -490,6 +493,9 @@ def main():
         logger.info("  Num examples = %d", len(train_examples))
         logger.info("  Batch size = %d", args.train_batch_size)
         logger.info("  Num epoch = %d", args.num_train_epochs)
+
+        # early stopping
+        epochs_without_improvement = 0
 
         model.train()
         dev_dataset = {}
@@ -627,6 +633,7 @@ def main():
                     logger.info("  Best BLEU+xMatch:%s", dev_bleu + xmatch)
                     logger.info("  " + "*" * 20)
                     best_bleu = dev_bleu + xmatch
+                    epochs_without_improvement = 0
                     # Save best checkpoint for best bleu
                     output_dir = os.path.join(args.output_dir, 'checkpoint-best-bleu')
                     if not os.path.exists(output_dir):
@@ -634,7 +641,13 @@ def main():
                     model_to_save = model.module if hasattr(model, 'module') else model  # Only save the model it-self
                     output_model_file = os.path.join(output_dir, "pytorch_model.bin")
                     torch.save(model_to_save.state_dict(), output_model_file)
+                else:
+                    epochs_without_improvement += 1
 
+                # 如果验证集上的损失连续patience个epoch没有提高，则停止训练
+                if epochs_without_improvement == args.patience:
+                    print('Early stopping at epoch {}...'.format(epoch + 1))
+                    break
     if args.do_test:
         files = []
         if args.dev_filename is not None:
