@@ -9,6 +9,7 @@ train_file=../dataset/tl/train
 dev_file=../dataset/tl/valid
 epochs=100
 pretrained_model=microsoft/graphcodebert-base
+reload_path=saved_models/$source/checkpoint-last
 
 mkdir -p $output_dir
 python run_gcb.py \
@@ -29,4 +30,5 @@ python run_gcb.py \
 --eval_batch_size $batch_size \
 --learning_rate $lr \
 --patience 3 \
+--load_model_path $reload_path \
 --num_train_epochs $epochs 2>&1| tee $output_dir/train.log
