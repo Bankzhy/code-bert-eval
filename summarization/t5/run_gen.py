@@ -89,7 +89,8 @@ def eval_bleu_epoch(args, eval_data, eval_examples, model, tokenizer, split_tag,
                                      num_workers=4, pin_memory=True)
     else:
         eval_dataloader = DataLoader(eval_data, sampler=eval_sampler, batch_size=args.eval_batch_size)
-
+    if isinstance(model, torch.nn.DataParallel):
+        model = model.module
     model.eval()
     pred_ids = []
     bleu, codebleu = 0.0, 0.0
