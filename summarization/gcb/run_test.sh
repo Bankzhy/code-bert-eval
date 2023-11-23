@@ -9,7 +9,7 @@ source_length=256
 target_length=128
 beam_size=10
 
-python run.py \
+python run_gcb.py \
 --do_test \
 --model_type roberta \
 --source_lang $source \
