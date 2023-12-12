@@ -66,7 +66,7 @@ class RuntimeArguments:
     )
 
     batch_size: int = field(
-        default=8,
+        default=32,
         metadata={'help': 'Batch size for training on each device'}
     )
 
