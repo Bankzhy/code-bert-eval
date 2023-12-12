@@ -4,9 +4,6 @@ import torch.utils.data
 from torch.utils.data.dataset import Dataset
 
 import os
-import sys
-curPath = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
-sys.path.append(curPath)
 import random
 import logging
 import pickle
@@ -292,7 +289,7 @@ def init_dataset(args, mode, task=None, language=None, split=None, clone_mapping
         CodeDataset: Loaded or initialized dataset
 
     """
-    name = '.'.join([sub_name for sub_name in [mode, task, language, split] if sub_name is not None])
+    name = '.'.join([sub_name for sub_name in [mode, language, split] if sub_name is not None])
     if load_if_saved:
         path = os.path.join(args.dataset_save_dir, f'{name}.pk')
         if os.path.exists(path) and os.path.isfile(path):
