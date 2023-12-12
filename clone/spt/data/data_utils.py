@@ -875,31 +875,31 @@ def parse_for_clone(path, mapping):
 
         for line in tqdm(lines):
             id_1, id_2, label = line.split('\t')
-            try:
-                source_1 = mapping[id_1]
-                source_1 = remove_comments_and_docstrings(source_1, lang=enums.LANG_JAVA)
-                source_1 = replace_string_literal(source_1)
-                ast_1, name_1 = generate_single_ast_nl(source=source_1, lang=enums.LANG_JAVA)
-                code_1 = tokenize_source(source=source_1, lang=enums.LANG_JAVA)
+            # try:
+            source_1 = mapping[id_1]
+            source_1 = remove_comments_and_docstrings(source_1, lang=enums.LANG_JAVA)
+            source_1 = replace_string_literal(source_1)
+            ast_1, name_1 = generate_single_ast_nl(source=source_1, lang=enums.LANG_JAVA)
+            code_1 = tokenize_source(source=source_1, lang=enums.LANG_JAVA)
 
-                source_2 = mapping[id_2]
-                source_2 = remove_comments_and_docstrings(source_2, lang=enums.LANG_JAVA)
-                source_2 = replace_string_literal(source_2)
-                ast_2, name_2 = generate_single_ast_nl(source=source_2, lang=enums.LANG_JAVA)
-                code_2 = tokenize_source(source=source_2, lang=enums.LANG_JAVA)
+            source_2 = mapping[id_2]
+            source_2 = remove_comments_and_docstrings(source_2, lang=enums.LANG_JAVA)
+            source_2 = replace_string_literal(source_2)
+            ast_2, name_2 = generate_single_ast_nl(source=source_2, lang=enums.LANG_JAVA)
+            code_2 = tokenize_source(source=source_2, lang=enums.LANG_JAVA)
 
-                label = int(label)
+            label = int(label)
 
-                codes_1.append(code_1)
-                asts_1.append(ast_1)
-                names_1.append(name_1)
-                codes_2.append(code_2)
-                asts_2.append(ast_2)
-                names_2.append(name_2)
-                labels.append(label)
-            except Exception as e:
-                logger.info(str(e))
-                continue
+            codes_1.append(code_1)
+            asts_1.append(ast_1)
+            names_1.append(name_1)
+            codes_2.append(code_2)
+            asts_2.append(ast_2)
+            names_2.append(name_2)
+            labels.append(label)
+            # except Exception as e:
+            #     logger.info(str(e))
+            #     continue
     return codes_1, asts_1, names_1, codes_2, asts_2, names_2, labels
 
 
