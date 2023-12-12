@@ -22,11 +22,11 @@ from torch.utils.data import SequentialSampler
 from torch.utils.tensorboard import SummaryWriter
 from transformers import BartConfig, get_scheduler, SchedulerType, get_linear_schedule_with_warmup
 
-from clone.spt.args import add_args
-from clone.spt.models.utils import get_elapse_time
+from spt.args import add_args
+from spt.models.utils import get_elapse_time
 from utils.general import count_params, human_format, layer_wise_parameters
-from clone.spt import enums
-from clone.spt.data.dataset import init_dataset
+from spt import enums
+from spt.data.dataset import init_dataset
 from models.bart import BartForClassificationAndGeneration, BartCloneModel
 from data.vocab import Vocab, load_vocab, init_vocab
 from torch.utils.data.dataloader import DataLoader
