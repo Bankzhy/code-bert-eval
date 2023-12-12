@@ -871,7 +871,7 @@ def parse_for_clone(path, mapping):
     labels = []
     with open(path, encoding='utf-8') as f:
         lines = f.readlines()
-        lines = random.sample(lines, 1000)
+        # lines = random.sample(lines, 1000)
 
         for line in tqdm(lines):
             id_1, id_2, label = line.split('\t')
