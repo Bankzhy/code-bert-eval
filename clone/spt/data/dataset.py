@@ -4,6 +4,9 @@ import torch.utils.data
 from torch.utils.data.dataset import Dataset
 
 import os
+import sys
+curPath = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
+sys.path.append(curPath)
 import random
 import logging
 import pickle
