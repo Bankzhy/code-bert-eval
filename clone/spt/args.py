@@ -15,6 +15,12 @@ class RuntimeArguments:
                   'help': 'Whether to pre-train'}
     )
 
+    do_test: bool = field(
+        default=False,
+        metadata={'action': 'store_true',
+                  'help': 'Whether to pre-train'}
+    )
+
     pre_train_tasks: str = field(
         default=','.join(enums.PRE_TRAIN_TASKS),
         metadata={'help': 'Pre-training tasks in order, split by commas, '
