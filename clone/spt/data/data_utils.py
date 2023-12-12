@@ -897,7 +897,8 @@ def parse_for_clone(path, mapping):
                 asts_2.append(ast_2)
                 names_2.append(name_2)
                 labels.append(label)
-            except Exception:
+            except Exception as e:
+                logger.info(str(e))
                 continue
     return codes_1, asts_1, names_1, codes_2, asts_2, names_2, labels
 
