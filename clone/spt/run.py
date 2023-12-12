@@ -288,7 +288,7 @@ def run_clone(args,
         # loss
         loss_fct = torch.nn.CrossEntropyLoss()
         num_train_optimization_steps = args.n_epoch * len(dataloader)
-        save_steps = max(len(dataloader) // 5, 1)
+        save_steps = max(len(dataloader) // 10, 1)
         logger.info(f"  Save Steps = {save_steps}")
         # --------------------------------------------------
         # train
