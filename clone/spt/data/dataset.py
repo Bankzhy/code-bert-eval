@@ -145,6 +145,7 @@ class CodeDataset(Dataset):
                 assert len(self.codes_1) == len(self.asts_1) == len(self.names_1) \
                        == len(self.codes_2) == len(self.asts_2) == len(self.names_2) == len(self.labels)
                 self.size = len(self.codes_1)
+                logger.info('The size of load dataset: {}'.format(self.size))
             # completion
             elif task == enums.TASK_COMPLETION:
                 assert split in ['train', 'valid', 'test']
