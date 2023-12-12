@@ -1,13 +1,19 @@
+import re
+import sys
+import os
+
+curPath = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
+sys.path.append(curPath)
+print("当前的工作目录：",os.getcwd())
+print("python搜索模块的路径集合",sys.path)
 import argparse
 import logging
 import random
-import sys
 import time
 
 import numpy as np
 import torch
 import torch.nn as nn
-import os
 from typing import Union, Tuple
 
 from prettytable import PrettyTable
