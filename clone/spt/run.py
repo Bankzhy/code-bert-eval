@@ -110,6 +110,8 @@ def run_clone(args,
     accelerator = Accelerator()
     logger.info('-' * 100)
     logger.info(f'Code Clone')
+    trained_model = args.trained_model
+    trained_vocab = args.trained_vocab
     # --------------------------------------------------
     # datasets
     # --------------------------------------------------
